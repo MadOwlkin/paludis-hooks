@@ -47,14 +47,18 @@ class BtrfsCtrl:
         btrfs_cmd = 'btrfs subvolume snapshot %s %s/%s %s/%s' % (r_str, self.tmpmnt, source, self.tmpmnt, snapname)
         os.system(btrfs_cmd)
 
-    def rollback(self, source, target):
+    def rollback(self, source, target, subvol = None):
         if self.tmpmnt is None:
             raise Error('btrfs control mount is not established')
         self.rm_snapshot(target)
         self.snapshot(source, target, False)
         mnt_handle = MntWrapper(self.source, self.target)
         mnt_handle.umount()
-        mnt_handle.mount('subvol=portage')
+        if subvol == None:
+            subvol_option = 'subvol=%s' % target
+        else:
+            subvol_option = 'subvol=%s' % subvol
+        mnt_handle.mount(subvol_option)
 
     def rm_snapshot(self, snapname):
         if self.tmpmnt is None:
