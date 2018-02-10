@@ -3,6 +3,55 @@ import subprocess
 import tempfile
 import libmount as mnt
 
+class RepositoryOptions:
+    def __init__(self, options):
+        if 'method' in options:
+            self.__method = options['method'].encode('utf-8')
+        else:
+            self.__method = 'plain'
+            print 'method not set, defaulting to %s' % self.__method
+        if 'key_location' in options:
+            self.__key_location = options['key_location'].encode('utf-8')
+        else:
+            self.__key_location = '/var/lib/gentoo/gkeys/keyrings/gentoo/release/pubring.gpg'
+            print 'key_location not set, defaulting to %s' % self.__key_location
+        if 'mntpoint' in options:
+            self.__mntpoint = options['mntpoint'].encode('utf-8')
+        else:
+            self.__mntpoint = '/usr/portage'
+            print 'mntpoint not set, defaulting to %s' % self.__mntpoint
+        if self.__method == 'btrfs':
+            if 'device' in options:
+                self.__device = options['device'].encode('utf-8')
+            else:
+                self.__device = None
+                print 'device not set, unable to default to a sane value'
+            if 'subvol' in options:
+                self.__subvol = options['subvol'].encode('utf-8')
+            else:
+                self.__subvol = 'portage'
+                print 'subvol not set, defaulting to %s' % self.__subvol
+        else:
+            self.__device = None
+            self.__subvol = None
+
+    def method(self):
+        if self.__device == None:
+            return 'plain'
+        return self.__method
+
+    def device(self):
+        return self.__device
+
+    def mntpoint(self):
+        return self.__mntpoint
+
+    def subvol(self):
+        return self.__subvol
+
+    def key_location(self):
+        return self.__key_location
+
 class MntWrapper:
     def __init__(self, dev, mntpoint):
         self.dev = dev

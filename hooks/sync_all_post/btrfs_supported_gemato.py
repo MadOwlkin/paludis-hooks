@@ -11,17 +11,15 @@ def hook_run_sync_all_post(env, hook_env):
     targets = hook_env["TARGETS"].split(" ")
     for name in targets:
         if name in data:
-            key_location = data[name]['key_location'].encode('utf-8')
-            portage_tree = data[name]['mntpoint'].encode('utf-8')
-            device = data[name]['device'].encode('utf-8')
+            options = btrfs.RepositoryOptions(data[name])
 
-            gemato_args = [ 'verify', portage_tree, '-K', key_location, '-s' ]
-            print "Verifying authenticity of %s with keys from %s" % (portage_tree, key_location)
+            gemato_args = [ 'verify', options.mntpoint(), '-K', options.key_location(), '-s' ]
+            print "Verifying authenticity of %s with keys from %s" % (options.mntpoint(), options.key_location())
             ret = subprocess.call(['/usr/bin/gemato'] + gemato_args)
-            if data[name]['method'].encode('utf-8') == 'btrfs':
-                ctrl = btrfs.BtrfsCtrl(device, portage_tree)
+            if options.method() == 'btrfs':
+                ctrl = btrfs.BtrfsCtrl(options.device(), options.mntpoint())
                 with ctrl:
                     if ret == 1:
                         print "Authenticity check failed. Rolling back..."
-                        ctrl.rollback('snapshots/snapshot_pre_sync', 'portage')
+                        ctrl.rollback('snapshots/snapshot_pre_sync', options.subvol())
                     ctrl.rm_snapshot('snapshots/snapshot_pre_sync')

@@ -10,8 +10,9 @@ def hook_run_sync_all_pre(env, hook_env):
 
     for name in targets:
         if name in data:
-            if data[name]['method'].encode('utf-8') == 'btrfs':
+            options = btrfs.RepositoryOptions(data[name])
+            if options.method() == 'btrfs':
                 print "Preparing btrfs rollback for %s" % name
-                ctrl = btrfs.BtrfsCtrl(data[name]['device'].encode('utf-8', 'ignore'), data[name]['mntpoint'].encode('utf-8'))
+                ctrl = btrfs.BtrfsCtrl(options.device(), options.mntpoint())
                 with ctrl:
                     ctrl.snapshot('portage', 'snapshots/snapshot_pre_sync')
