@@ -12,7 +12,6 @@ def hook_run_sync_all_pre(env, hook_env):
         if name in data:
             if data[name]['method'].encode('utf-8') == 'btrfs':
                 print "Preparing btrfs rollback for %s" % name
-                ctrl = btrfs.BtrfsCtrl(data[name]['device'].encode('utf-8', 'ignore'))
-                with ctrl as tmpmnt:
-                    snapshot = 'btrfs subvolume snapshot -r %s/portage %s/snapshots/snapshot_pre_sync' % (tmpmnt, tmpmnt)
-                    os.system(snapshot)
+                ctrl = btrfs.BtrfsCtrl(data[name]['device'].encode('utf-8', 'ignore'), data[name]['mntpoint'].encode('utf-8'))
+                with ctrl:
+                    ctrl.snapshot('portage', 'snapshots/snapshot_pre_sync')

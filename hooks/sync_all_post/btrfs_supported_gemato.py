@@ -15,18 +15,12 @@ def hook_run_sync_all_post(env, hook_env):
             device = data[name]['device'].encode('utf-8')
 
             gemato_cmd = "gemato verify %s -K %s" % (portage_tree, key_location)
-            print "Verifying integrity of %s with keys from %s" % (portage_tree, key_location)
+            print "Verifying authenticity of %s with keys from %s" % (portage_tree, key_location)
             ret = os.system(gemato_cmd)
             if data[name]['method'].encode('utf-8') == 'btrfs':
-                ctrl = btrfs.BtrfsCtrl(device)
-                with ctrl as tmpmnt:
+                ctrl = btrfs.BtrfsCtrl(device, portage_tree)
+                with ctrl:
                     if ret == 1:
-                        snapshot_cmd = "btrfs subvolume delete %s/portage" % tmpmnt
-                        os.system(snapshot_cmd)
-                        snapshot_cmd = "btrfs subvolume snapshot %s/snapshots/snapshot_pre_sync %s/portage" % (tmpmnt, tmpmnt)
-                        os.system(snapshot_cmd)
-                        mnt_handle = btrfs.MntWrapper(device, portage_tree)
-                        mnt_handle.umount()
-                        mnt_handle.mount('subvol=portage')
-                    snapshot_cmd = "btrfs subvolume delete %s/snapshots/snapshot_pre_sync" % tmpmnt
-                    os.system(snapshot_cmd)
+                        print "Authenticity check failed. Rolling back..."
+                        ctrl.rollback('snapshots/snapshot_pre_sync', 'portage')
+                    ctrl.rm_snapshot('snapshots/snapshot_pre_sync')
