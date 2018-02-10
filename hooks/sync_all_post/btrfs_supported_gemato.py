@@ -15,7 +15,7 @@ def hook_run_sync_all_post(env, hook_env):
             portage_tree = data[name]['mntpoint'].encode('utf-8')
             device = data[name]['device'].encode('utf-8')
 
-            gemato_args = [ 'verify', portage_tree, '-K', key_location ]
+            gemato_args = [ 'verify', portage_tree, '-K', key_location, '-s' ]
             print "Verifying authenticity of %s with keys from %s" % (portage_tree, key_location)
             ret = subprocess.call(['/usr/bin/gemato'] + gemato_args)
             if data[name]['method'].encode('utf-8') == 'btrfs':
