@@ -1,0 +1,9 @@
+{
+	"gentoo": {
+		"device": "/dev/sda6",
+		"mntpoint": "/usr/portage",
+		"subvolid": "portage",
+		"key_location": "/var/lib/gentoo/gkeys/keyrings/gentoo/release/pubring.gpg",
+		"method": "btrfs"
+	}
+}
