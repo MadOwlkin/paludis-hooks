@@ -1,4 +1,5 @@
 import os
+import subprocess
 import tempfile
 import libmount as mnt
 
@@ -40,12 +41,14 @@ class BtrfsCtrl:
     def snapshot(self, source, snapname, read_only = True):
         if self.tmpmnt is None:
             raise Error('btrfs control mount is not established')
+
+        btrfs_args = [ 'subvolume', 'snapshot', '%s/%s' % (self.tmpmnt, source), '%s/%s' % (self.tmpmnt, snapname) ]
+
         if read_only == True:
-            r_str = '-r'
-        else:
-            r_str = ''
-        btrfs_cmd = 'btrfs subvolume snapshot %s %s/%s %s/%s' % (r_str, self.tmpmnt, source, self.tmpmnt, snapname)
-        os.system(btrfs_cmd)
+            btrfs_args.append('-r')
+
+        with open(os.devnull, 'wb') as devnull:
+            subprocess.check_call(['/sbin/btrfs'] + btrfs_args, stdout=devnull)
 
     def rollback(self, source, target, subvol = None):
         if self.tmpmnt is None:
@@ -63,5 +66,8 @@ class BtrfsCtrl:
     def rm_snapshot(self, snapname):
         if self.tmpmnt is None:
             raise Error('btrfs control mount is not established')
-        btrfs_cmd = "btrfs subvolume delete %s/%s" % (self.tmpmnt, snapname)
-        os.system(btrfs_cmd)
+
+        btrfs_args = [ 'subvolume', 'delete', '%s/%s' % (self.tmpmnt, snapname) ]
+
+        with open(os.devnull, 'wb') as devnull:
+            subprocess.check_call(['/sbin/btrfs'] + btrfs_args, stdout=devnull)

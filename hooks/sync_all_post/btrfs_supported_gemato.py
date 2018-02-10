@@ -1,4 +1,5 @@
 import os
+import subprocess
 import imp
 import json
 
@@ -14,9 +15,9 @@ def hook_run_sync_all_post(env, hook_env):
             portage_tree = data[name]['mntpoint'].encode('utf-8')
             device = data[name]['device'].encode('utf-8')
 
-            gemato_cmd = "gemato verify %s -K %s" % (portage_tree, key_location)
+            gemato_args = [ 'verify', portage_tree, '-K', key_location ]
             print "Verifying authenticity of %s with keys from %s" % (portage_tree, key_location)
-            ret = os.system(gemato_cmd)
+            ret = subprocess.call(['/usr/bin/gemato'] + gemato_args)
             if data[name]['method'].encode('utf-8') == 'btrfs':
                 ctrl = btrfs.BtrfsCtrl(device, portage_tree)
                 with ctrl:
