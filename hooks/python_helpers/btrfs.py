@@ -20,6 +20,13 @@ class RepositoryOptions:
         else:
             self.__mntpoint = '/usr/portage'
             print 'mntpoint not set, defaulting to %s' % self.__mntpoint
+        if 'enabled' in options:
+            if options['enabled'].lower() in [ 'true', '1', 'yes' ]:
+                self.__enabled = True
+            else:
+                self.__enabled = False
+        else:
+            self.__enabled = False
         if self.__method == 'btrfs':
             if 'device' in options:
                 self.__device = options['device'].encode('utf-8')
@@ -42,6 +49,9 @@ class RepositoryOptions:
 
     def device(self):
         return self.__device
+
+    def enabled(self):
+        return self.__enabled
 
     def mntpoint(self):
         return self.__mntpoint

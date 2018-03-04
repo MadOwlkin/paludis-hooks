@@ -13,6 +13,10 @@ def hook_run_sync_all_post(env, hook_env):
         if name in data:
             options = btrfs.RepositoryOptions(data[name])
 
+            if not options.enabled():
+                print '%s is configured, but disabled' % name
+                continue
+
             gemato_args = [ 'verify', options.mntpoint(), '-K', options.key_location(), '-s' ]
             print "Verifying authenticity of %s with keys from %s" % (options.mntpoint(), options.key_location())
             ret = subprocess.call(['/usr/bin/gemato'] + gemato_args)
