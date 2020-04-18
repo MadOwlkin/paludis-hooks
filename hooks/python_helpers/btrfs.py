@@ -9,17 +9,17 @@ class RepositoryOptions:
             self.__method = options['method'].encode('utf-8')
         else:
             self.__method = 'plain'
-            print 'method not set, defaulting to %s' % self.__method
+            print('method not set, defaulting to %s' % self.__method)
         if 'key_location' in options:
             self.__key_location = options['key_location'].encode('utf-8')
         else:
             self.__key_location = '/var/lib/gentoo/gkeys/keyrings/gentoo/release/pubring.gpg'
-            print 'key_location not set, defaulting to %s' % self.__key_location
+            print('key_location not set, defaulting to %s' % self.__key_location)
         if 'mntpoint' in options:
             self.__mntpoint = options['mntpoint'].encode('utf-8')
         else:
             self.__mntpoint = '/usr/portage'
-            print 'mntpoint not set, defaulting to %s' % self.__mntpoint
+            print('mntpoint not set, defaulting to %s' % self.__mntpoint)
         if 'enabled' in options:
             if options['enabled'].lower() in [ 'true', '1', 'yes' ]:
                 self.__enabled = True
@@ -32,12 +32,12 @@ class RepositoryOptions:
                 self.__device = options['device'].encode('utf-8')
             else:
                 self.__device = None
-                print 'device not set, unable to default to a sane value'
+                print('device not set, unable to default to a sane value')
             if 'subvol' in options:
                 self.__subvol = options['subvol'].encode('utf-8')
             else:
                 self.__subvol = 'portage'
-                print 'subvol not set, defaulting to %s' % self.__subvol
+                print('subvol not set, defaulting to %s' % self.__subvol)
         else:
             self.__device = None
             self.__subvol = None

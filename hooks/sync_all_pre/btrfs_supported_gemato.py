@@ -12,11 +12,11 @@ def hook_run_sync_all_pre(env, hook_env):
         if name in data:
             options = btrfs.RepositoryOptions(data[name])
             if not options.enabled():
-                print '%s is configured, but disabled' % name
+                print('%s is configured, but disabled' % name)
                 continue
 
             if options.method() == 'btrfs':
-                print "Preparing btrfs rollback for %s" % name
+                print("Preparing btrfs rollback for %s" % name)
                 ctrl = btrfs.BtrfsCtrl(options.device(), options.mntpoint())
                 with ctrl:
                     ctrl.snapshot('portage', 'snapshots/snapshot_pre_sync')

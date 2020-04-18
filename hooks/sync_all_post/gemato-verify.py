@@ -9,6 +9,6 @@ def hook_run_sync_all_post(env, hook_env):
     targets = hook_env["TARGETS"].split(" ")
     for name in targets:
         if name == "gentoo":
-            print "Verifying integrity of %s with keys from %s" % (portage_tree, key_location)
+            print("Verifying integrity of %s with keys from %s" % (portage_tree, key_location))
             ret = os.system(gemato_cmd)
     return ret
